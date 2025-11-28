@@ -13,5 +13,11 @@ private:
 public:
     TcpClient(int client_fd, int epoll_fd);
     ~TcpClient() override;
+    TcpClient(const TcpClient&) = delete;
+    TcpClient& operator=(const TcpClient&) = delete;
+    
+    TcpClient(TcpClient&&) = default; 
+    TcpClient& operator=(TcpClient&&) = default; 
+    
     bool handle_data(bool& shutdown_requested);
 };
