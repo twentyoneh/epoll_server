@@ -4,6 +4,9 @@
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <netinet/in.h>
+#include <cstring>
+#include <cstdio>
+#include <stdexcept>
 
 class TcpListener : public SocketWrapper{
 public:

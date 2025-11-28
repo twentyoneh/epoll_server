@@ -1,9 +1,5 @@
 #include "TcpListener.h"
 
-#include <cstring>
-#include <cstdio>
-#include <stdexcept>
-
 TcpListener::TcpListener(int port, int epoll_fd){
     fd = socket(AF_INET, SOCK_STREAM, 0);
     if(fd < 0) throw std::runtime_error("socket tcp failed");

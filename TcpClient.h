@@ -3,6 +3,9 @@
 #include "SocketWrapper.h"
 #include <sys/epoll.h>
 #include <sys/socket.h>
+#include <iostream>
+#include <string>
+#include <errno.h>
 
 class TcpClient : public SocketWrapper{
 private:

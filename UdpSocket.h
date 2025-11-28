@@ -5,6 +5,10 @@
 #include <sys/epoll.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <cstring>
+#include <cstdio>
+#include <stdexcept>
+#include <cerrno>
 
 class UdpSocket : public SocketWrapper{
 public:

@@ -1,7 +1,4 @@
 #include "TcpClient.h"
-#include <iostream>
-#include <string>
-#include <errno.h>
 
 TcpClient::TcpClient(int client_fd, int epoll_fd) : SocketWrapper(client_fd), epoll_fd(epoll_fd) {
 
