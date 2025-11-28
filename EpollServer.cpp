@@ -23,8 +23,6 @@ EpollServer::~EpollServer() {
 
 void EpollServer::run(){
     epoll_event events[MAX_EVENTS];
-    time_t rawtime = time(nullptr);
-    struct tm* timeinfo = localtime(&rawtime); 
     std::cout << "info: " << asctime(timeinfo) << "Server is running on port " << PORT << std::endl;
 
     while(!shutdown_flag){
@@ -58,4 +56,46 @@ void EpollServer::run(){
         if(shutdown_flag) break;
     }
     std::cout << "info: " << asctime(timeinfo) << "Server shutting down cleanly." << std::endl;
+}
+
+void EpollServer::handle_new_tcp_connections(){
+    struct sockaddr_in client_addr;
+    socklen_t client_len = sizeof(client_addr);
+    while (true) {
+        int client_fd = accept(tcp_listener->get_fd(), (struct sockaddr *)&client_addr, &client_len);
+        if (client_fd == -1) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) break;
+            perror("accept");
+            break;
+        }
+
+        try {
+            tcp_clients.emplace_back(client_fd, epoll_fd);
+            std::cout << "info: " << asctime(timeinfo) << "New TCP client connected from " << inet_ntoa(client_addr.sin_addr) 
+                      << ":" << ntohs(client_addr.sin_port) << " (FD: " << client_fd << ")" << std::endl;
+        } 
+        catch (const std::exception& e) {
+            std::cerr << "info: " << asctime(timeinfo) << "Error accepting client: " << e.what() << std::endl;
+            close(client_fd);
+        }
+    }
+}
+
+void EpollServer::handle_tcp_client_data(int fd, uint32_t events){
+    auto it = std::find_if(tcp_clients.begin(), tcp_clients.end(), 
+                           [fd](const TcpClient& c){ return c.get_fd() == fd; });
+    if (it == tcp_clients.end()) return;
+
+    if (events & (EPOLLHUP | EPOLLERR | EPOLLRDHUP)) {
+        std::cout << "info: " << asctime(timeinfo) << "Client disconnected (FD: " << fd << ").\n";
+        tcp_clients.erase(it);
+        return;
+    }
+    
+    if (events & EPOLLIN) {
+        if (!it->handle_data(shutdown_flag)) {
+            std::cout << "info: " << asctime(timeinfo) << "Closing client connection (FD: " << fd << ").\n";
+            tcp_clients.erase(it);
+        }
+    }
 }

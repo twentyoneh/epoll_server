@@ -8,10 +8,12 @@
 #include "UdpSocket.h"
 #include "TcpClient.h"
 
-constexpr int MAX_EVENTS = 64;
+const int MAX_EVENTS = 64;
 
 class EpollServer {
 private:
+    time_t rawtime = time(nullptr);
+    struct tm* timeinfo = localtime(&rawtime); 
     int epoll_fd;
     TcpListener* tcp_listener = nullptr;
     UdpSocket* udp_socket = nullptr;
