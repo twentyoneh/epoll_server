@@ -6,9 +6,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-class UdpListener : public SocketWrapper{
+class UdpSocket : public SocketWrapper{
 public:
-    UdpListener (int port, int epoll_fd);
+    UdpSocket (int port, int epoll_fd);
     void handle_data(struct sockaddr_in& client_addr, socklen_t& client_len, bool& shutdown_request);
 };
 

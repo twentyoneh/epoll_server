@@ -4,7 +4,7 @@ long total_clients_connected = 0;
 int current_tcp_clients = 0;
 
 int set_nonblocking(int fd){
-    int flags = fcntl(fd, F_GETFL, 0); // Флаги состояния для fd
+    int flags = fcntl(fd, F_GETFL, 0); // В каком состоянии дескриптор файла
     if(flags == -1){
         perror("fcntl F_GETFL: bad file descriptor");
         return -1;

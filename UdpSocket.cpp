@@ -1,11 +1,11 @@
-#include "UdpListener.h"
+#include "UdpSocket.h"
 
 #include <cstring>
 #include <cstdio>
 #include <stdexcept>
 #include <cerrno>
 
-UdpListener::UdpListener(int port, int epoll_fd) {
+UdpSocket::UdpSocket(int port, int epoll_fd) {
     fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (fd < 0) throw std::runtime_error("socket udp failed");
 
@@ -33,7 +33,7 @@ UdpListener::UdpListener(int port, int epoll_fd) {
     std::cout << "UDP listening on port " << port << std::endl;
 }
 
-void UdpListener::handle_data(struct sockaddr_in& client_addr, socklen_t& client_len, bool& shutdown_requested) {
+void UdpSocket::handle_data(struct sockaddr_in& client_addr, socklen_t& client_len, bool& shutdown_requested) {
         char buffer[BUFFER_SIZE];
         ssize_t count;
         
