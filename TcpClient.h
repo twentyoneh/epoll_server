@@ -2,6 +2,7 @@
 
 #include "SocketWrapper.h"
 #include <sys/epoll.h>
+#include <sys/socket.h>
 
 class TcpClient : public SocketWrapper{
 private:

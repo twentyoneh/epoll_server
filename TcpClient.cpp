@@ -1,6 +1,7 @@
 #include "TcpClient.h"
 #include <iostream>
 #include <string>
+#include <errno.h>
 
 TcpClient::TcpClient(int client_fd, int epoll_fd) : SocketWrapper(client_fd), epoll_fd(epoll_fd) {
 
@@ -25,4 +26,49 @@ TcpClient::~TcpClient() {
         epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL);
         current_tcp_clients--;
     }
+}
+
+bool TcpClient::handle_data(bool& shutdown_requested){
+    char buffer[BUFFER_SIZE];
+    ssize_t count;
+
+    while (true)
+    {
+        count = recv(fd, buffer, BUFFER_SIZE -1, 0);
+        
+        if(count == -1){
+            if(errno == EAGAIN || errno == EWOULDBLOCK){
+                return true;
+            }
+            perror("recv");
+            return false;
+        }
+
+        if(count == 0){
+            return false;
+        }
+
+        buffer[count] = '\0';
+        std::string message(buffer, count);
+
+        if(message.find('/') == 0){
+            std::string response = handle_command(message, shutdown_requested);
+            
+            if (shutdown_requested) {
+                return false;
+            }
+
+            if(!response.empty()){
+                response += "\n";
+                send(fd, response.c_str(), response.length(), 0);
+            }
+        } 
+        else{
+            // есди это не команда - отправить то, что пришло
+            send(fd,buffer,count,0);
+        }
+
+        
+    }
+    
 }
