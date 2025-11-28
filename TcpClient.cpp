@@ -2,7 +2,7 @@
 
 TcpClient::TcpClient(int client_fd, int epoll_fd) : SocketWrapper(client_fd), epoll_fd(epoll_fd) {
 
-    if(set_nonbloking(client_fd) == -1){
+    if(set_nonblocking(client_fd) == -1){
         throw std::runtime_error("Failed to set non-blocking mode for client.");
     }
 

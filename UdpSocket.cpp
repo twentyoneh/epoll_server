@@ -4,7 +4,7 @@ UdpSocket::UdpSocket(int port, int epoll_fd) {
     fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (fd < 0) throw std::runtime_error("socket udp failed");
 
-    if (set_nonbloking(fd) == -1) {
+    if (set_nonblocking(fd) == -1) {
         close(fd);
         throw std::runtime_error("Failed to set non-blocking mode for UDP socket.");
     }

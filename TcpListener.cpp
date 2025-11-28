@@ -7,7 +7,7 @@ TcpListener::TcpListener(int port, int epoll_fd){
     int opt = 1;
     setsockopt(fd, SOL_SOCKET,SO_REUSEADDR, &opt, sizeof(opt));
 
-    if(set_nonbloking(fd) == -1){
+    if(set_nonblocking(fd) == -1){
         close(fd);
         throw std::runtime_error("Filed to set non-blocing mode for TCP");
     }

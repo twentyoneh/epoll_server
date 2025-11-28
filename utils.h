@@ -12,5 +12,5 @@ extern int current_tcp_clients;
 const int BUFFER_SIZE = 1024;
 const int PORT = 8080;
 
-int set_nonbloking(int fd);
+int set_nonblocking(int fd);
 std::string handle_command(const std::string& inp, bool& shutdown_request);
