@@ -23,7 +23,7 @@ EpollServer::~EpollServer() {
 
 void EpollServer::run(){
     epoll_event events[MAX_EVENTS];
-    time_t rawtime;
+    time_t rawtime = time(nullptr);
     struct tm* timeinfo = localtime(&rawtime); 
     std::cout << "info: " << asctime(timeinfo) << "Server is running on port " << PORT << std::endl;
 
