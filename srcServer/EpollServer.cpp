@@ -38,7 +38,7 @@ void EpollServer::run(){
             int current_fd = events[i].data.fd;
 
             // TCP
-            if(current_fd == udp_socket->get_fd()){
+            if(current_fd == tcp_listener->get_fd()){
                 handle_new_tcp_connections();
             }
             // UDP

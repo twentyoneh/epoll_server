@@ -41,27 +41,27 @@ void UdpSocket::handle_data(struct sockaddr_in& client_addr, socklen_t& client_l
                 }
                 break;
             }
+        
+        total_clients_connected++;
+        buffer[count] = '\0';
+        std::string message(buffer, count);
+        
+        std::cout << "UDP message from " << inet_ntoa(client_addr.sin_addr) << ":" 
+                  << ntohs(client_addr.sin_port) << ": " << message << std::endl;
+        
+        if (message.rfind('/', 0) == 0) {
+            std::string response = handle_command(message, shutdown_requested);
             
-            total_clients_connected++;
-            buffer[count] = '\0';
-            std::string message(buffer, count);
-            
-            std::cout << "UDP message from " << inet_ntoa(client_addr.sin_addr) << ":" 
-                      << ntohs(client_addr.sin_port) << ": " << message << std::endl;
-            
-            if (message.rfind('/', 0) == 0) {
-                std::string response = handle_command(message, shutdown_requested);
-                
-                if (shutdown_requested) {
-                    std::cout << "/shutdown command received via UDP. Shutting down." << std::endl;
-                    return;
-                }
-                if (!response.empty()) {
-                    sendto(fd, response.c_str(), response.length(), 0, (struct sockaddr *)&client_addr, client_len);
-                }
-            } else {
-                // Зеркалирование
-                sendto(fd, buffer, count, 0, (struct sockaddr *)&client_addr, client_len);
+            if (shutdown_requested) {
+                std::cout << "/shutdown command received via UDP. Shutting down." << std::endl;
+                return;
             }
+            if (!response.empty()) {
+                sendto(fd, response.c_str(), response.length(), 0, (struct sockaddr *)&client_addr, client_len);
+            }
+        } else {
+            // Зеркалирование
+            sendto(fd, buffer, count, 0, (struct sockaddr *)&client_addr, client_len);
         }
     }
+}
