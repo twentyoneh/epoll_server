@@ -4,22 +4,27 @@ LDFLAGS =
 LIBS = -lstdc++
 
 TARGET = epoll_server_cpp
-SOURCES = main.cpp EpollServer.cpp TcpListener.cpp UdpSocket.cpp TcpClient.cpp utils.cpp 
-BUILD_DIR = build
-OBJECTS = $(SOURCES:%.cpp=$(BUILD_DIR)/%.o)
+SOURCES = srcServer/main.cpp \
+          srcServer/EpollServer.cpp \
+          srcServer/TcpListener.cpp \
+          srcServer/UdpSocket.cpp \
+          srcServer/TcpClient.cpp \
+          srcServer/utils.cpp
+BUILD_DIR_SERVER = build
+OBJECTS = $(SOURCES:%.cpp=$(BUILD_DIR_SERVER)/%.o)
 
 .PHONY: all clean
 
-all: $(BUILD_DIR) $(TARGET)
+all: $(BUILD_DIR_SERVER) $(TARGET)
 
-$(BUILD_DIR):
-	@mkdir -p $(BUILD_DIR)
+$(BUILD_DIR_SERVER):
+	@mkdir -p $(BUILD_DIR_SERVER)
 
 $(TARGET): $(OBJECTS)
 	$(CXX) $(LDFLAGS) $(OBJECTS) -o $@ $(LIBS)
 
-$(BUILD_DIR)/%.o: %.cpp
+$(BUILD_DIR_SERVER)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
+	rm -rf $(BUILD_DIR_SERVER) $(TARGET)
